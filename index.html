@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>TICKR Agent — Transparent Agentic Research &amp; Paper Trading for Tokenized Stocks on Base</title>
+<meta name="description" content="TICKR Agent researches Coinbase tokenized stocks on Base with fully transparent rules and logs every paper-trade decision onchain on Base Sepolia testnet. Testnet only. No real money. US persons excluded.">
+<link rel="stylesheet" href="styles.css">
+</head>
+<body>
+<header class="topbar">
+  <div class="brand">
+    <span class="logo">◉</span>
+    <div>
+      <h1>TICKR <span class="agent-tag">AGENT</span></h1>
+      <p class="subtitle">Transparent agentic research &amp; paper trading for tokenized stocks on Base</p>
+    </div>
+  </div>
+  <div class="top-actions">
+    <span id="networkBadge" class="badge">Base Sepolia · chain 84532 · TESTNET</span>
+    <button id="connectBtn" class="btn primary">Connect Wallet</button>
+  </div>
+</header>
+
+<div id="usBanner" class="us-banner hidden"></div>
+
+<main>
+  <section class="hero">
+    <h2>An agent that shows its work.</h2>
+    <p>
+      TICKR reads live reference data for <strong>Coinbase tokenized stocks</strong> from the public
+      Tokenized Stocks API (no key required), scores each stock with <strong>published, rule-based
+      logic</strong> — no black box — and logs every paper-trade decision <strong>onchain</strong> to a
+      public journal on <strong>Base Sepolia testnet</strong>, with its reasoning hash and an
+      ERC-8021 Builder Code (<code>bc_sijyqbvn</code>) attached. Anyone can verify any decision.
+    </p>
+    <div class="hero-stats">
+      <div class="stat"><span id="statTokens">–</span><label>tokenized stocks tracked</label></div>
+      <div class="stat"><span id="statPriced">–</span><label>with live NAV price</label></div>
+      <div class="stat"><span id="statJournal">–</span><label>paper trades logged onchain</label></div>
+      <div class="stat"><span id="statCash">$10,000.00</span><label>virtual paper cash</label></div>
+    </div>
+    <p class="disclaimer">
+      TESTNET DEMO — paper trading only. No real stocks, no real money, no real trades.
+      NAV prices are Chainlink reference values, not execution prices. Not investment advice.
+      Tokenized stocks are not available to U.S. persons; this app blocks trading for users
+      located in the United States.
+    </p>
+  </section>
+
+  <section class="panel" id="gatePanel">
+    <h3>1 · Eligibility gate <span class="step-note">US persons excluded</span></h3>
+    <p id="geoStatus" class="muted">Checking your location…</p>
+    <label class="check">
+      <input type="checkbox" id="attestBox">
+      I confirm that I am <strong>not</strong> a U.S. person and I am not located in the United States.
+      I understand this is a testnet paper-trading demo with no real assets.
+    </label>
+    <p id="gateNote" class="muted small">Trading controls stay disabled until the location check passes and you confirm the statement above.</p>
+  </section>
+
+  <section class="panel">
+    <h3>2 · Live market <span class="step-note">Coinbase Tokenized Stocks API · read live, no key</span></h3>
+    <div class="row">
+      <button id="refreshMarketBtn" class="btn">↻ Refresh market data</button>
+      <input id="searchInput" type="search" placeholder="Search all 377 tokens by symbol or name…">
+      <span id="marketStatus" class="muted"></span>
+    </div>
+    <table class="data" id="marketTable">
+      <thead><tr><th>Token</th><th>Company</th><th>NAV (ref)</th><th>NAV age</th><th>Supply</th><th>Multiplier</th><th>Contract</th></tr></thead>
+      <tbody><tr><td colspan="7" class="muted">Loading live data…</td></tr></tbody>
+    </table>
+    <p class="muted small">Only tokens with a published NAV price can be priced by the agent. Tokens without NAV data are listed but never traded — the agent says so explicitly instead of guessing a price.</p>
+  </section>
+
+  <section class="panel">
+    <h3>3 · Agent analysis <span class="step-note">rule-based · every signal carries its reasons</span></h3>
+    <div class="row">
+      <button id="runAgentBtn" class="btn primary">▶ Run agent analysis</button>
+      <span id="agentStatus" class="muted"></span>
+    </div>
+    <details class="rules">
+      <summary>How the agent scores (published rules — audit me)</summary>
+      <ul>
+        <li><strong>Freshness:</strong> NAV age &lt; 1h → +30 · 1–6h → +15 · &gt; 6h → forced AVOID (stale price).</li>
+        <li><strong>Supply depth:</strong> total supply &gt; 10,000 → +20 · 1,000–10,000 → +10 · thin/unknown → +0.</li>
+        <li><strong>Drift vs last snapshot:</strong> NAV up &gt; 2% → +10 · down &gt; 2% → −10 · otherwise +0.</li>
+        <li><strong>Signal:</strong> score ≥ 40 → BUY · 20–39 → HOLD · &lt; 20 or stale/no NAV → AVOID.</li>
+        <li><strong>Sizing:</strong> at most 10% of available paper cash per BUY, whole milli-shares.</li>
+        <li><strong>No NAV → no trade, ever.</strong> The agent never invents a price.</li>
+      </ul>
+    </details>
+    <table class="data" id="agentTable">
+      <thead><tr><th>Token</th><th>Score</th><th>Signal</th><th>NAV</th><th>Reasons</th><th>Action</th></tr></thead>
+      <tbody><tr><td colspan="6" class="muted">Run the agent to see signals.</td></tr></tbody>
+    </table>
+  </section>
+
+  <section class="panel">
+    <h3>4 · Paper portfolio <span class="step-note">virtual $10,000 · stored in your browser</span></h3>
+    <div class="hero-stats">
+      <div class="stat"><span id="pfCash">$10,000.00</span><label>paper cash</label></div>
+      <div class="stat"><span id="pfPositions">$0.00</span><label>positions value (live NAV)</label></div>
+      <div class="stat"><span id="pfTotal">$10,000.00</span><label>total value</label></div>
+      <div class="stat"><span id="pfPnl">$0.00 (0.00%)</span><label>paper P&amp;L</label></div>
+    </div>
+    <table class="data" id="portfolioTable">
+      <thead><tr><th>Token</th><th>Qty (shares)</th><th>Avg cost</th><th>Live NAV</th><th>Value</th><th>P&amp;L</th><th></th></tr></thead>
+      <tbody><tr><td colspan="7" class="muted">No positions yet — run the agent and execute a paper BUY.</td></tr></tbody>
+    </table>
+    <button id="resetPortfolioBtn" class="btn danger-ghost">Reset paper portfolio</button>
+  </section>
+
+  <section class="panel">
+    <h3>5 · Onchain journal <span class="step-note">TradeJournal · Base Sepolia · public &amp; append-only</span></h3>
+    <p id="journalStatus" class="muted">Journal contract not deployed yet on Base Sepolia.</p>
+    <div class="row">
+      <button id="deployJournalBtn" class="btn">Deploy journal contract (your wallet pays testnet gas)</button>
+      <button id="refreshJournalBtn" class="btn">↻ Refresh journal</button>
+      <span id="journalAddr" class="muted mono"></span>
+    </div>
+    <table class="data" id="journalTable">
+      <thead><tr><th>#</th><th>Time (UTC)</th><th>Token</th><th>Side</th><th>Qty</th><th>NAV @ decision</th><th>Reason hash</th><th>Tx</th></tr></thead>
+      <tbody><tr><td colspan="8" class="muted">No onchain entries yet.</td></tr></tbody>
+    </table>
+    <p class="muted small">Each entry stores a keccak256 hash of the agent's reasoning text. The reasoning text itself is shown in the analysis table above — hash it yourself to verify the onchain entry matches what the agent said. Every journal transaction also carries the ERC-8021 Builder Code suffix <code>bc_sijyqbvn</code>.</p>
+  </section>
+
+  <section class="panel">
+    <h3>About &amp; honest limitations</h3>
+    <ul class="about">
+      <li><strong>What this is:</strong> a testnet demo for the Base Stocks Maxxing Builder Quest (Agentic Stock Finance track). It researches real tokenized-stock reference data and paper-trades it with full transparency.</li>
+      <li><strong>What it is not:</strong> a broker, an exchange, or investment advice. No real stocks are bought or sold. Paper trades execute at NAV reference prices, not market prices.</li>
+      <li><strong>Traction:</strong> this project launched 17 Nov 2026 and currently has <strong>zero real users</strong> — any usage numbers shown are this demo's own paper activity only.</li>
+      <li><strong>Testnet only:</strong> all onchain activity is on Base Sepolia (chain 84532). Testnet ETH has no value. The B20 tokenized stocks themselves live on Base mainnet; this demo never touches mainnet.</li>
+      <li><strong>US exclusion:</strong> trading is disabled for users located in the United States (IP geolocation check + self-attestation), because Coinbase tokenized stocks are not available to U.S. persons.</li>
+      <li><strong>Open source:</strong> contract, agent rules, and this UI are public on GitHub (MIT). Builder Code <code>bc_sijyqbvn</code> registered for the agent wallet <code>0x822bbE7174FC3E54cc278AD35dDE6532b2F8415B</code>.</li>
+    </ul>
+  </section>
+</main>
+
+<footer>
+  <p>TICKR Agent · Built for the Base Stocks Maxxing Builder Quest · Agentic Stock Finance track · Testnet only · Not investment advice · <a href="https://github.com/Tiannuryadins/tickr-agent" target="_blank" rel="noopener">GitHub</a></p>
+</footer>
+
+<script type="module" src="app.js"></script>
+</body>
+</html>
